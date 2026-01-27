@@ -126,7 +126,7 @@ export default function Dashboard() {
       // 3. 获取年度台账 (费用与结案)
       const { data: ledgerData, error: ledgerError } = await supabase
         .from('mese_ledger')
-        .select('serial_number, material_name, drawing_number, amount, resolution, category, cause, department, customer_name, report_year, apply_date, status')
+        .select('serial_number, material_name, amount, resolution, category, cause, department, customer_name, report_year, apply_date, status')
         .eq('report_year', selectedYear)
       
       if (ledgerError) throw ledgerError
@@ -462,6 +462,10 @@ export default function Dashboard() {
                                     <td key={i} className="py-2 pr-4">
                                       {c === 'amount' ? `¥${Math.round(Number(r[c]) || 0).toLocaleString()}` 
                                         : c === 'apply_date' ? (r[c] ? new Date(r[c]).toISOString().slice(0,10) : '') 
+                                        : c === 'drawing_number' ? (() => {
+                                            const m = overviewRaw.find(d => d.serial_number === r.serial_number && (!r.material_name || d.material_name === r.material_name))
+                                            return m?.drawing_number || ''
+                                          })()
                                         : r[c]}
                                     </td>
                                   ))}

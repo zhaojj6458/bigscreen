@@ -7,6 +7,8 @@ import '../App.css'
 function UploadPage() {
   const [logs, setLogs] = useState([])
   const [loading, setLoading] = useState(false)
+  const [auth, setAuth] = useState(typeof window !== 'undefined' && window.localStorage.getItem('upload_auth') === '1')
+  const [password, setPassword] = useState('')
 
   const addLog = (msg, type = 'info') => {
     setLogs(prev => [...prev, { msg, type, time: new Date().toLocaleTimeString() }])
@@ -469,6 +471,38 @@ function UploadPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  if (!auth) {
+    return (
+      <div className="min-h-screen bg-slate-50 p-6 md:p-12 font-sans flex items-center justify-center">
+        <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+          <h1 className="text-xl font-bold text-slate-800 mb-4 text-center">数据上传登录</h1>
+          <div className="space-y-3">
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="请输入密码"
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+            />
+            <button
+              className="w-full px-3 py-2 rounded-lg bg-amber-600 text-white text-sm font-medium hover:bg-amber-700"
+              onClick={() => {
+                if (password === 'mese3030') {
+                  window.localStorage.setItem('upload_auth', '1')
+                  setAuth(true)
+                } else {
+                  alert('密码错误')
+                }
+              }}
+            >
+              登录
+            </button>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
